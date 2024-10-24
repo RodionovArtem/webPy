@@ -7,7 +7,7 @@ from schemas.user import UserCreate, UserAuthorize
 from models.Users import UserRole, users
 from utils.token import create_access_token
 
-async def create_user(user: UserCreate, db: Database, role: UserRole = "user"):
+async def create_user(user: UserCreate, db: Database, role: UserRole):
     query = users.select().where(users.c.email == user.email)
     existing_user = await db.fetch_one(query)
     if existing_user:
@@ -15,8 +15,6 @@ async def create_user(user: UserCreate, db: Database, role: UserRole = "user"):
 
     hashed_password = hash_password(user.password)
     pwd_hash = hashed_password.decode('utf-8')
-
-    role = user.role if hasattr(user, "role") and user.role else UserRole.user.value
 
 
     query = insert(users).values(
