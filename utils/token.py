@@ -26,6 +26,7 @@ def validate_token_and_role(required_roles: List[str]):
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             name = payload.get("sub")
+            id = payload.get("id")
             role = payload.get("role") 
             if name is None or role is None:
                 raise HTTPException(
@@ -35,9 +36,9 @@ def validate_token_and_role(required_roles: List[str]):
             if role not in required_roles:
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
-                    detail="Your role is not valid fot this request"
+                    detail="Your role is not valid for this request"
                 )
-            return {"name": name, "role": role}
+            return {"name": name, "role": role, "id": id}
         except JWTError:
             raise HTTPException(
             status_code=401,
